@@ -1,0 +1,104 @@
+public class MyLinkedList<E> {
+
+    private static class Entry<E> {
+        E data;
+        Entry<E> prev;
+        Entry<E> next;
+
+        public Entry(E data, Entry<E> prev, Entry<E> next) {
+            this.data = data;
+            this.prev = prev;
+            this.next = next;
+        }
+    }
+
+    Entry<E> header;
+    int size;
+
+    public MyLinkedList() {
+        header = new Entry<>(null, null, null);
+        header.next = header;
+        header.prev = header;
+        size = 0;
+    }
+
+    public int length() {
+        return size;
+    }
+
+    public void addFirst(E data) {
+        Entry<E> newEntry = new Entry<>(data, header, header.next);
+        newEntry.prev.next = newEntry;
+        newEntry.next.prev = newEntry;
+        size++;
+    }
+
+    public void addLast(E data) {
+        Entry<E> newEntry = new Entry<>(data, header.prev, header);
+        newEntry.prev.next = newEntry;
+        newEntry.next.prev = newEntry;
+        size++;
+    }
+
+    public void add(E data, int index) {
+        Entry<E> nextEntry = entry(index);
+        Entry<E> newEntry = new Entry<>(data, nextEntry.prev, nextEntry);
+        newEntry.prev.next = newEntry;
+        newEntry.next.prev = newEntry;
+        size++;
+    }
+
+    private Entry<E> entry(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+
+        Entry<E> e = header;
+
+        if (index < size / 2) {
+            for (int i = 0; i <= index; i++) {
+                e = e.next;
+            }
+        } else {
+            for (int i = size - 1; i >= index; i--) {
+                e = e.prev;
+            }
+        }
+
+        return e;
+    }
+
+    public void removeFirst() {
+        if (size == 0) {
+            throw new IndexOutOfBoundsException("No elements to remove");
+        }
+        header.next = header.next.next;
+        size--;
+    }
+
+    public void removeLast() {
+        if (size == 0) {
+            throw new IndexOutOfBoundsException("No elements to remove");
+        }
+        header.prev = header.prev.prev;
+        size--;
+    }
+
+    public void remove(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        Entry<E> entryToDelete = entry(index);
+        entryToDelete.prev.next = entryToDelete.next;
+        entryToDelete.next.prev = entryToDelete.prev;
+        size--;
+    }
+
+    public E get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        Entry<E> e = entry(index);
+        return e.data;
+    }
+}
